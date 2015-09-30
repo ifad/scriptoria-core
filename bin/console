@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'bundler/setup'
+
+$: << File.expand_path("../../lib", __FILE__)
+
+require_relative '../config/environment'
+require 'scriptoria-core'
+
+require 'irb'
+IRB.start
