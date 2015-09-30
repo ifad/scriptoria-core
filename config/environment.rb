@@ -1,5 +1,5 @@
 require 'dotenv'
-require 'yajl'
+require 'yajl/json_gem'
 require 'rufus-json'
 require 'ruote-kit'
 require 'ruote-postgres'
