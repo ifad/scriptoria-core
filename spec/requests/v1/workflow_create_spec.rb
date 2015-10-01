@@ -23,7 +23,7 @@ describe ScriptoriaCore::Application do
     end
 
     it "enqueues the workflow in ruote" do
-      expect(RuoteKit.engine).to receive(:launch).with('[ "participant", { "ref" : "alpha" }, [] ]').and_return(result)
+      expect(RuoteKit.engine).to receive(:launch).with('[ "participant", { "ref" : "alpha" }, [] ]', { callbacks: { 'aaa' => 'http://localhost:1234/callback/aaa' }}).and_return(result)
 
       post '/v1/workflows', {
         'workflow' => '[ "participant", { "ref" : "alpha" }, [] ]',

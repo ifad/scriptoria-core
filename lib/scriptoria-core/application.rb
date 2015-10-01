@@ -21,8 +21,13 @@ module ScriptoriaCore
       end
 
       post '/' do
-        # TODO store callbacks somewhere (inside the workflow?)
-        wfid = RuoteKit.engine.launch(params[:workflow])
+        # Convert array of callbacks to a hashmap
+        callbacks = params[:callbacks].inject({}) do |hash, callback|
+          hash[callback['participant']] = callback['url']
+          hash
+        end
+
+        wfid = RuoteKit.engine.launch(params[:workflow], { callbacks: callbacks })
       end
     end
   end

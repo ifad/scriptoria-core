@@ -3,6 +3,7 @@ require 'yajl/json_gem'
 require 'rufus-json'
 require 'ruote-kit'
 require 'ruote-postgres'
+require 'scriptoria-core/http_participant'
 
 # TODO we should seperate this into seperate initialiser files ala Rails
 
@@ -20,3 +21,8 @@ Ruote::Postgres.create_table($ruote_storage_connection)
 RuoteKit.engine = Ruote::Engine.new(
   Ruote::Postgres::Storage.new($ruote_storage_connection)
 )
+
+# Register participant
+RuoteKit.engine.register do
+  catchall ScriptoriaCore::HttpParticipant
+end
