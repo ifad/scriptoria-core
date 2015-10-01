@@ -25,7 +25,7 @@ module ScriptoriaCore
         error!('workflow is invalid', 400)
       end
 
-      post '/' do
+      post do
         # Convert array of callbacks to a hashmap
         callbacks = params[:callbacks].inject({}) do |hash, callback|
           hash[callback['participant']] = callback['url']
@@ -33,6 +33,32 @@ module ScriptoriaCore
         end
 
         wfid = RuoteKit.engine.launch(params[:workflow], { callbacks: callbacks })
+
+        {
+          workflow_id: wfid
+        }
+      end
+
+      route_param :workflow_id do
+        resource :workitems do
+          route_param :workitem_id do
+
+            params do
+              requires :workflow_id, type: String
+              requires :workitem_id, type: String
+              requires :fields, type: Hash
+            end
+
+            post :proceed do
+              ScriptoriaCore::HttpParticipant.proceed(
+                params[:workflow_id],
+                params[:workitem_id],
+                params[:fields]
+              )
+            end
+
+          end
+        end
       end
     end
   end

@@ -31,7 +31,26 @@ describe ScriptoriaCore::HttpParticipant do
     end
   end
 
+  def store_workitem(engine, workitem)
+    doc = workitem.to_h
+
+    doc.merge!(
+      'type' => 'workitems',
+      '_id' => 'wi!' + workitem.fei.to_storage_id,
+      'participant_name' => doc['participant_name'],
+      'wfid' => doc['fei']['wfid'])
+
+    engine.storage.put(doc)
+  end
+
   subject { setup_participant(engine, workitem) }
+
+  before do
+    allow(RuoteKit).to receive(:engine).and_return(engine)
+    engine.register do
+      catchall ScriptoriaCore::HttpParticipant
+    end
+  end
 
   context "#on_workitem" do
     it "makes a POST request to the target URL" do
@@ -68,6 +87,36 @@ describe ScriptoriaCore::HttpParticipant do
       expect(subject).to receive(:re_dispatch).with(in: '60s')
 
       subject.on_workitem
+    end
+  end
+
+  context "::proceed" do
+    before do
+      store_workitem(engine, workitem)
+      allow(RuoteKit.engine).to receive(:participant).and_return(subject)
+    end
+
+    it "raises an error if the workitem can't be found" do
+      expect {
+        described_class.proceed('wfid123', 'nonexistant')
+      }.to raise_error("workitem not found")
+    end
+
+    it "raises an error if the workflow id is incorrect" do
+      expect {
+        described_class.proceed('nonexistant', '0!abc123!wfid123')
+      }.to raise_error("workflow mismatch")
+    end
+
+    it "merges the fields with the workitem" do
+      allow(Ruote::Workitem).to receive(:new).and_return(workitem)
+      described_class.proceed('wfid123', '0!abc123!wfid123', { "status" => "error" })
+      expect(workitem.fields["status"]).to eq "error"
+    end
+
+    it "calls #proceed on the participant" do
+      expect(subject).to receive(:proceed).with(workitem)
+      described_class.proceed('wfid123', '0!abc123!wfid123')
     end
   end
 end
