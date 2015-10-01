@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'bundler/setup'
 
+ENV['RACK_ENV'] ||= 'test'
+
 $: << File.expand_path("../../lib", __FILE__)
 require_relative '../config/environment'
 require 'scriptoria-core'

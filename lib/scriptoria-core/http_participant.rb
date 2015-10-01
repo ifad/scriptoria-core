@@ -9,7 +9,7 @@ module ScriptoriaCore
     end
 
     def on_cancel
-      puts "on_cancel: #{workitem.inspect}"
+      ScriptoriaCore.logger.info "on_cancel: #{workitem.inspect}"
       super
     end
 
@@ -19,7 +19,7 @@ module ScriptoriaCore
       participant = workitem.participant_name
       url         = workitem.fields['callbacks'][participant]
 
-      puts "Making request to `#{url}' for `#{participant}'"
+      ScriptoriaCore.logger.info "Making request to `#{url}' for `#{participant}'"
 
       request = HTTPI::Request.new
       request.url  = url
@@ -27,14 +27,14 @@ module ScriptoriaCore
       begin
         response = HTTPI.post(request)
         if response.code >= 200 && response.code < 300
-          puts "Successful response received"
+          ScriptoriaCore.logger.info "Successful response received"
           true
         else
-          puts "Error response received"
+          ScriptoriaCore.logger.info "Error response received"
           false
         end
       rescue Exception => e
-        puts "Exception occured: #{e.inspect}"
+        ScriptoriaCore.logger.info "Exception occured: #{e.inspect}"
         false
       end
     end

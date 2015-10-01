@@ -1,9 +1,14 @@
 require 'grape'
+require 'grape_logging'
 
 module ScriptoriaCore
   class Application < Grape::API
     version 'v1', :using => :path
     format :json
+    logger ScriptoriaCore.logger
+
+    logger.formatter = GrapeLogging::Formatters::Default.new
+    use GrapeLogging::Middleware::RequestLogger, { logger: logger }
 
     resource :workflows do
       params do

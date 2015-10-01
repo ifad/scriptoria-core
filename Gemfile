@@ -7,6 +7,7 @@ gem 'ruote-postgres', github: 'ifad/ruote-postgres'
 gem 'dotenv'
 gem 'yajl-ruby'
 gem 'grape'
+gem 'grape_logging'
 gem 'httpi'
 
 group :development do

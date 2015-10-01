@@ -1,14 +1,25 @@
 require 'dotenv'
+require 'scriptoria-core'
+require 'logger'
+require 'httpi'
 require 'yajl/json_gem'
 require 'rufus-json'
 require 'ruote-kit'
 require 'ruote-postgres'
-require 'scriptoria-core/http_participant'
 
 # TODO we should seperate this into seperate initialiser files ala Rails
 
 # Load environment from .env in development
 Dotenv.load
+
+# Setup logger
+ENV['RACK_ENV'] ||= 'development'
+ScriptoriaCore.logger = Logger.new(File.expand_path("../../log", __FILE__) + "/" + ENV['RACK_ENV'] + ".log")
+
+# Setup HTTPI
+HTTPI.log       = true
+HTTPI.logger    = ScriptoriaCore.logger
+HTTPI.log_level = :info
 
 # Setup rufus
 Rufus::Json.backend = :yajl
