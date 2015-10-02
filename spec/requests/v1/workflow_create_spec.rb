@@ -11,12 +11,9 @@ describe ScriptoriaCore::Application do
     it "returns a successful response" do
       post '/v1/workflows', {
         'workflow' => '[ "participant", { "ref" : "alpha" }, [] ]',
-        'callbacks' => [
-          {
-            'participant' => 'aaa',
-            'url'         => 'http://localhost:1234/callback/aaa'
-          }
-        ]
+        'callbacks' => {
+          'alpha' => 'http://localhost:1234/callback/alpha'
+        }
       }
 
       expect(response.status).to eq 201
@@ -24,16 +21,13 @@ describe ScriptoriaCore::Application do
     end
 
     it "enqueues the workflow in ruote" do
-      expect(RuoteKit.engine).to receive(:launch).with('[ "participant", { "ref" : "alpha" }, [] ]', { callbacks: { 'aaa' => 'http://localhost:1234/callback/aaa' }}).and_return(result)
+      expect(RuoteKit.engine).to receive(:launch).with('[ "participant", { "ref" : "alpha" }, [] ]', { callbacks: { 'alpha' => 'http://localhost:1234/callback/alpha' }}).and_return(result)
 
       post '/v1/workflows', {
         'workflow' => '[ "participant", { "ref" : "alpha" }, [] ]',
-        'callbacks' => [
-          {
-            'participant' => 'aaa',
-            'url'         => 'http://localhost:1234/callback/aaa'
-          }
-        ]
+        'callbacks' => {
+          'alpha' => 'http://localhost:1234/callback/alpha'
+        }
       }
 
       expect(response.status).to eq 201
@@ -42,12 +36,9 @@ describe ScriptoriaCore::Application do
     context "validations" do
       it "returns an error if the workflow is missing" do
         post '/v1/workflows', {
-          'callbacks' => [
-            {
-              'participant' => 'aaa',
-              'url'         => 'http://localhost:1234/callback/aaa'
-            }
-          ]
+          'callbacks' => {
+            'alpha' => 'http://localhost:1234/callback/alpha'
+          }
         }
 
         expect(response.status).to eq 400
@@ -59,12 +50,9 @@ describe ScriptoriaCore::Application do
 
         post '/v1/workflows', {
           'workflow' => 'define woop',
-          'callbacks' => [
-            {
-              'participant' => 'aaa',
-              'url'         => 'http://localhost:1234/callback/aaa'
-            }
-          ]
+          'callbacks' => {
+            'alpha' => 'http://localhost:1234/callback/alpha'
+          }
         }
 
         expect(response.status).to eq 400

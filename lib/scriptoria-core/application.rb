@@ -12,13 +12,8 @@ module ScriptoriaCore
 
     resource :workflows do
       params do
-        # This is actually JSON, but we want to decode it ourselves
-        requires :workflow, type: String
-
-        requires :callbacks, type: Array do
-          requires :participant, type: String
-          requires :url, type: String
-        end
+        requires :workflow,  type: String
+        requires :callbacks, type: Hash
       end
 
       rescue_from Ruote::Reader::Error do |e|
@@ -26,13 +21,7 @@ module ScriptoriaCore
       end
 
       post do
-        # Convert array of callbacks to a hashmap
-        callbacks = params[:callbacks].inject({}) do |hash, callback|
-          hash[callback['participant']] = callback['url']
-          hash
-        end
-
-        wfid = RuoteKit.engine.launch(params[:workflow], { callbacks: callbacks })
+        wfid = RuoteKit.engine.launch(params[:workflow], { callbacks: params[:callbacks] })
 
         {
           workflow_id: wfid
