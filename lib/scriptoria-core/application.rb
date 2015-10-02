@@ -16,15 +16,18 @@ module ScriptoriaCore
         requires :callbacks, type: Hash
       end
 
-      rescue_from Ruote::Reader::Error do |e|
+      rescue_from Workflow::WorkflowInvalidError do |e|
         error!('workflow is invalid', 400)
       end
 
       post do
-        wfid = RuoteKit.engine.launch(params[:workflow], { callbacks: params[:callbacks] })
+        workflow = Workflow.create!(
+          params[:workflow],
+          params[:callbacks]
+        )
 
         {
-          workflow_id: wfid
+          id: workflow.id
         }
       end
 

@@ -2,10 +2,10 @@ require 'spec_helper'
 
 describe ScriptoriaCore::Application do
   context "POST /v1/workflow" do
-    let(:result) { double('result', to_s: 'wfid1234') }
+    let(:workflow) { double('workflow', id: 'wfid1234') }
 
     before do
-      allow(RuoteKit.engine).to receive(:launch).and_return(result)
+      allow(ScriptoriaCore::Workflow).to receive(:create!).and_return(workflow)
     end
 
     it "returns a successful response" do
@@ -17,11 +17,11 @@ describe ScriptoriaCore::Application do
       }
 
       expect(response.status).to eq 201
-      expect(response.body).to   eq '{"workflow_id":"wfid1234"}'
+      expect(response.body).to   eq '{"id":"wfid1234"}'
     end
 
-    it "enqueues the workflow in ruote" do
-      expect(RuoteKit.engine).to receive(:launch).with('[ "participant", { "ref" : "alpha" }, [] ]', { callbacks: { 'alpha' => 'http://localhost:1234/callback/alpha' }}).and_return(result)
+    it "creates a workflow" do
+      expect(ScriptoriaCore::Workflow).to receive(:create!).with('[ "participant", { "ref" : "alpha" }, [] ]', { 'alpha' => 'http://localhost:1234/callback/alpha' }).and_return(workflow)
 
       post '/v1/workflows', {
         'workflow' => '[ "participant", { "ref" : "alpha" }, [] ]',
@@ -46,7 +46,7 @@ describe ScriptoriaCore::Application do
       end
 
       it "returns an error if the workflow is invalid" do
-        allow(RuoteKit.engine).to receive(:launch).and_raise(Ruote::Reader::Error.new("cannot read process definition"))
+        allow(ScriptoriaCore::Workflow).to receive(:create!).and_raise(ScriptoriaCore::Workflow::WorkflowInvalidError)
 
         post '/v1/workflows', {
           'workflow' => 'define woop',
