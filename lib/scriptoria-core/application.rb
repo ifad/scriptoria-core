@@ -41,12 +41,21 @@ module ScriptoriaCore
               requires :fields, type: Hash
             end
 
+            rescue_from Workitem::NotFoundError do |e|
+              error!('workitem_id not found', 400)
+            end
+
+            rescue_from Workitem::WorkflowMismatchError do |e|
+              error!('workflow_id is mismatched', 400)
+            end
+
             post :proceed do
-              ScriptoriaCore::HttpParticipant.proceed(
+              workitem = Workitem.find(
                 params[:workflow_id],
-                params[:workitem_id],
-                params[:fields]
+                params[:workitem_id]
               )
+              workitem.update_fields(params[:fields])
+              workitem.proceed!
             end
 
           end

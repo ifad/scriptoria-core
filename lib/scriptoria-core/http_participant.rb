@@ -13,36 +13,14 @@ module ScriptoriaCore
       super
     end
 
-    def self.proceed(workflow_id, workitem_id, fields = {})
-      workitem = load_workitem(workflow_id, workitem_id)
-      workitem.fields.merge!(fields)
-
-      # this returns the instance of this class that is registered with Ruote
-      participant = RuoteKit.engine.participant(workitem.participant_name)
-      participant.proceed(workitem)
-    end
-
-    protected
-
-    def self.load_workitem(workflow_id, workitem_id)
-      hwi = RuoteKit.engine.storage.get('workitems', 'wi!' + workitem_id)
-      raise "workitem not found" if hwi.nil?
-
-      workitem = Ruote::Workitem.new(hwi)
-      raise "workflow mismatch"  if workflow_id != workitem.wfid
-
-      return workitem
-    end
-
     def request_callback
-      participant = workitem.participant_name
-      url         = workitem.fields['callbacks'][participant]
+      sc_workitem = ScriptoriaCore::Workitem.from_ruote_workitem(workitem)
 
-      ScriptoriaCore.logger.info "Making request to `#{url}' for `#{participant}'"
+      ScriptoriaCore.logger.info "Making request to `#{sc_workitem.callback_url}' for `#{sc_workitem.participant_name}'"
 
       request = HTTPI::Request.new
-      request.url  = url
-      request.body = callback_payload.to_json
+      request.url  = sc_workitem.callback_url
+      request.body = sc_workitem.callback_payload.to_json
       begin
         response = HTTPI.post(request)
         if response.code >= 200 && response.code < 300
@@ -56,18 +34,6 @@ module ScriptoriaCore
         ScriptoriaCore.logger.info "Exception occured: #{e.inspect}"
         false
       end
-    end
-
-    def callback_payload
-      # Send all the fields except the callback urls, which are used internally
-      fields = workitem.fields.dup
-      fields.delete('callbacks')
-
-      {
-        workflow_id: workitem.fei.wfid,
-        workitem_id: workitem.fei.to_storage_id,
-        fields: fields
-      }
     end
   end
 end
