@@ -66,6 +66,10 @@ describe ScriptoriaCore::Workitem do
   end
 
   context "#callback_payload" do
+    before do
+      ENV['BASE_URL'] = "http://example.com"
+    end
+
     it "returns the callback payload" do
       expect(subject.callback_payload).to eq({
         workflow_id: 'wfid123',
@@ -74,7 +78,8 @@ describe ScriptoriaCore::Workitem do
         fields: {
           "params" => { "ref" => "alpha" },
           "status" => "pending"
-        }
+        },
+        proceed_url: "http://example.com/v1/workflows/wfid123/workitems/0!abc123!wfid123/proceed"
       })
     end
   end

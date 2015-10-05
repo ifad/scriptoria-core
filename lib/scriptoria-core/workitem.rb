@@ -51,7 +51,8 @@ module ScriptoriaCore
         workflow_id: workflow_id,
         workitem_id: id,
         participant: participant_name,
-        fields:      fields
+        fields:      fields,
+        proceed_url: proceed_url
       }
     end
 
@@ -77,6 +78,11 @@ module ScriptoriaCore
     # this returns the instance of this class that is registered with Ruote
     def participant
       RuoteKit.engine.participant(participant_name)
+    end
+
+    # To be called by the client application to prcoeed this workitem
+    def proceed_url
+      "#{ENV['BASE_URL']}/v1/workflows/#{workflow_id}/workitems/#{id}/proceed"
     end
 
     class NotFoundError         < StandardError; end

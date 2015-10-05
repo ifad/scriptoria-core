@@ -13,6 +13,10 @@ describe ScriptoriaCore::HttpParticipant do
   end
 
   context "#on_workitem" do
+    before do
+      ENV['BASE_URL'] = "http://example.com"
+    end
+
     it "makes a POST request to the target URL" do
       stub_request(:post, "http://localhost:1234/callback/alpha").
         to_return(:status => 200)
@@ -24,7 +28,7 @@ describe ScriptoriaCore::HttpParticipant do
 
     it "includes the workitem id an params in the request" do
       stub_request(:post, "http://localhost:1234/callback/alpha").
-        with(body: '{"workflow_id":"wfid123","workitem_id":"0!abc123!wfid123","participant":"alpha","fields":{"params":{"ref":"alpha"},"status":"pending"}}').
+        with(body: '{"workflow_id":"wfid123","workitem_id":"0!abc123!wfid123","participant":"alpha","fields":{"params":{"ref":"alpha"},"status":"pending"},"proceed_url":"http://example.com/v1/workflows/wfid123/workitems/0!abc123!wfid123/proceed"}').
         to_return(:status => 200)
 
       subject.on_workitem
