@@ -19,8 +19,11 @@ module ScriptoriaCore
       ScriptoriaCore.logger.info "Making request to `#{sc_workitem.callback_url}' for `#{sc_workitem.participant_name}'"
 
       request = HTTPI::Request.new
-      request.url  = sc_workitem.callback_url
-      request.body = sc_workitem.callback_payload.to_json
+      request.url     = sc_workitem.callback_url
+      request.body    = sc_workitem.callback_payload.to_json
+      request.headers = {
+        "Content-Type" => "application/json"
+      }
       begin
         response = HTTPI.post(request)
         if response.code >= 200 && response.code < 300
