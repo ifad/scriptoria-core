@@ -2,6 +2,9 @@ require 'grape'
 require 'grape_logging'
 
 module ScriptoriaCore
+  # Scriptoria Core API - version 1.
+  #
+  # See {API_v1.md} and {spec/requests/v1/} for more details.
   class Application < Grape::API
     version 'v1', :using => :path
     format :json

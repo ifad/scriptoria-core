@@ -17,4 +17,5 @@ group :development do
   gem 'webmock'
   gem 'byebug'
   gem 'simplecov'
+  gem 'yard'
 end

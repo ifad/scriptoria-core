@@ -59,6 +59,7 @@ GEM
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
+    docile (1.1.5)
     dotenv (2.0.2)
     equalizer (0.0.11)
     file-tail (1.1.0)
@@ -129,6 +130,11 @@ GEM
       ruby_parser (>= 2.0.5)
     safe_yaml (1.0.4)
     sexp_processor (3.2.0)
+    simplecov (0.10.0)
+      docile (~> 1.1.0)
+      json (~> 1.8)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.0)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -158,6 +164,7 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
     yajl-ruby (1.2.1)
+    yard (0.8.7.6)
 
 PLATFORMS
   ruby
@@ -173,9 +180,11 @@ DEPENDENCIES
   ruote!
   ruote-kit!
   ruote-postgres!
+  simplecov
   unicorn
   webmock
   yajl-ruby
+  yard
 
 BUNDLED WITH
    1.10.6

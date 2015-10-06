@@ -1,0 +1,5 @@
+--readme README.md
+--title 'Scriptoria Core Documentation'
+--charset utf-8
+--markup markdown
+'lib/**/*.rb' - LICENSE API_v1.md

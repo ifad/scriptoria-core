@@ -1,7 +1,20 @@
 module ScriptoriaCore
+  # This class abstracts a Ruote workitem.
   class Workitem
-    attr_accessor :id, :workflow_id, :_workitem
 
+    # @return [String] ID of the workitem.
+    attr_accessor :id
+
+    # @return [String] ID of the workflow this workitem belongs to.
+    attr_accessor :workflow_id
+
+    # @return [Ruote::Workitem] internal Ruote workitem, should not be accessed
+    #   directly.
+    attr_accessor :_workitem
+
+    # Creates a new instance from a Ruote workitem.
+    #
+    # @param ruote_workitem [Ruote::Workitem]
     def self.from_ruote_workitem(ruote_workitem)
       workitem_id = ruote_workitem.fei.to_storage_id
       workflow_id = ruote_workitem.fei.wfid
@@ -13,6 +26,14 @@ module ScriptoriaCore
       )
     end
 
+    # Finds an instance by workflow and workitem IDs.
+    #
+    # @param workflow_id [String] Workflow ID
+    # @param workitem_id [String] Workitem ID
+    #
+    # @raise [NotFoundError] if the workitem doesn't exist in Ruote.
+    # @raise [WorkflowMismatchError] if the workflow ID doesn't match the
+    #   workitem.
     def self.find(workflow_id, workitem_id)
       hwi = RuoteKit.engine.storage.get('workitems', 'wi!' + workitem_id)
       raise NotFoundError if hwi.nil?
@@ -33,10 +54,16 @@ module ScriptoriaCore
       end
     end
 
+    # @return [String] the active participant name.
     def participant_name
       _workitem.participant_name
     end
 
+    # Returns the callback URL for this participant, based upon the callback
+    # URLs passed when the workflow was created.
+    #
+    # @return [String] callback URL.
+    # @raise [MissingCallbackUrl] if no URL is set for the active participant.
     def callback_url
       url = _workitem.fields['callbacks'][participant_name]
       if url.nil?
@@ -46,9 +73,14 @@ module ScriptoriaCore
       end
     end
 
+    # Returns the status of the workitem.
+    #
     # When an error or timeout occurs one of these fields is set on the
     # workitem, then the `on_error` method is called on a participant. We use
     # this to generate the `status` field which is sent in the callback.
+    #
+    # @return [Symbol] Workitem status, one of `:active`, `:timeout` or
+    #   `:error`.
     def status
       if _workitem.fields.has_key?("__timed_out__")
         :timeout
@@ -59,6 +91,8 @@ module ScriptoriaCore
       end
     end
 
+    # Resets the workitem status to `active`.
+    #
     # This is a bit of a hack to handle a Ruote limitation, when an error or
     # timeout occurs one of these fields is set on the workitem, then the
     # `on_error` method is called on a participant. We use this to generate the
@@ -71,6 +105,10 @@ module ScriptoriaCore
       _workitem.fields.delete("__error__")
     end
 
+    # Returns the callback payload to be sent in callback requests to external
+    # applications.
+    #
+    # @return [Hash] callback payload.
     def callback_payload
       {
         workflow_id: workflow_id,
@@ -82,6 +120,7 @@ module ScriptoriaCore
       }
     end
 
+    # Reader for public fields in the workitem.
     def fields
       fields = _workitem.fields.dup
       fields.delete("callbacks")
@@ -89,19 +128,24 @@ module ScriptoriaCore
       fields
     end
 
+    # Merges `fields` with the existing fields on the workitem, with those
+    # passed in taking precidence.
+    #
+    # @param fields [Hash] new fields.
     def update_fields(fields)
       fields.each do |k, v|
         _workitem.fields[k] = v
       end
     end
 
+    # Calls the proceed action on the workitem.
     def proceed!
       participant.proceed(_workitem)
     end
 
     protected
 
-    # this returns the instance of this class that is registered with Ruote
+    # Returns the instance of HttpParticipant that is registered with Ruote.
     def participant
       RuoteKit.engine.participant(participant_name)
     end

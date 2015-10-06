@@ -1,9 +1,24 @@
 require 'ruote'
 
 module ScriptoriaCore
+  # This class abstracts a Ruote workflow.
   class Workflow
-    attr_accessor :workflow, :callbacks, :id
 
+    # @return [String] ID of the workflow.
+    attr_accessor :id
+
+    # @return [String] Ruote process definition.
+    attr_accessor :workflow
+
+    # @return [Hash] Callback URLs.
+    attr_accessor :callbacks
+
+    # Creates and launches a workflow in Ruote.
+    #
+    # @param workflow [String] A process definition in any format Ruote can
+    #   understand (XML, JSON, Radial).
+    # @param callbacks [Hash] Callback URLs.
+    # @raise [WorkflowInvalidError] if the process definition is invalid.
     def self.create!(workflow, callbacks)
       new(workflow: workflow, callbacks: callbacks).save!
     end
@@ -14,6 +29,9 @@ module ScriptoriaCore
       end
     end
 
+    # Validates the Ruote process definition.
+    #
+    # @raise [WorkflowInvalidError] if the process definition is invalid.
     def validate!
       begin
         Ruote::Reader.read(workflow)
@@ -22,6 +40,9 @@ module ScriptoriaCore
       end
     end
 
+    # Validates and launches the workflow in Ruote.
+    #
+    # @raise [WorkflowInvalidError] if the process definition is invalid.
     def save!
       validate!
       self.id = RuoteKit.engine.launch(workflow, { callbacks: callbacks })
