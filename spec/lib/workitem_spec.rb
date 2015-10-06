@@ -142,6 +142,20 @@ describe ScriptoriaCore::Workitem do
         "status" => "success"
       })
     end
+
+    it "does nothing if the parameter is nil" do
+      expect(subject.fields).to eq({
+        "params" => { "ref" => "alpha" },
+        "status" => "pending"
+      })
+
+      subject.update_fields(nil)
+
+      expect(subject.fields).to eq({
+        "params" => { "ref" => "alpha" },
+        "status" => "pending"
+      })
+    end
   end
 
   context "#proceed!" do

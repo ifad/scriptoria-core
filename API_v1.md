@@ -106,12 +106,15 @@ Once a workitem has been completed the proceed action should be called.
 
 | Parameter | Mandatory | Description                              |
 |-----------|-----------|------------------------------------------|
-| fields    | Yes       | Hash of fields to be set on the workitem |
+| fields    | No        | Hash of fields to be set on the workitem |
 
 `fields` will be merged with existing fields on the workitem. If a field is
 already set on the workitem, fields in the `fields` parameter will take
 precidence. The fields set here will then be present on subsequent callbacks
 requests.
+
+If `fields` is not passed, the proceed action will be called without changing
+any fields on the workitem.
 
 ### Example Request
 

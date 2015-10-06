@@ -43,11 +43,9 @@ describe ScriptoriaCore::Application do
     end
 
     context "validations" do
-      it "returns an error if the fields are missing" do
+      it "allows the fields to be missing" do
         post '/v1/workflows/1234/workitems/5678/proceed', {}
-
-        expect(response.status).to eq 400
-        expect(response.body).to   eq '{"error":"fields is missing"}'
+        expect(response.status).to eq 201
       end
 
       it "returns an error if the workitem can't be found" do

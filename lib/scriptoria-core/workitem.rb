@@ -133,6 +133,8 @@ module ScriptoriaCore
     #
     # @param fields [Hash] new fields.
     def update_fields(fields)
+      return if fields.nil?
+
       fields.each do |k, v|
         _workitem.fields[k] = v
       end

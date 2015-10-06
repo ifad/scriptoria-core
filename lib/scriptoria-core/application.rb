@@ -41,7 +41,7 @@ module ScriptoriaCore
             params do
               requires :workflow_id, type: String
               requires :workitem_id, type: String
-              requires :fields, type: Hash
+              optional :fields, type: Hash
             end
 
             rescue_from Workitem::NotFoundError do |e|
