@@ -59,13 +59,14 @@ to handle errors, the workitem or entire workflowmay be replayed.
 
 ### Parameters
 
-| Parameter    | Mandatory | Description                 |
-|--------------|-----------|-----------------------------|
-| workflow\_id | Yes       | ID of the workflow          |
-| workitem\_id | Yes       | ID of the workitem          |
-| participant  | Yes       | Participant name            |
-| status       | Yes       | Status of the workitem      |
-| fields       | Yes       | Hash of the workitem fields |
+| Parameter    | Mandatory | Description                         |
+|--------------|-----------|-------------------------------------|
+| workflow\_id | Yes       | ID of the workflow                  |
+| workitem\_id | Yes       | ID of the workitem                  |
+| participant  | Yes       | Participant name                    |
+| status       | Yes       | Status of the workitem              |
+| fields       | Yes       | Hash of the workitem fields         |
+| proceed\_url | Yes       | URL to call to proceed the workitem |
 
 `status` can be `active` (the default), `timeout` or `error`.
 
@@ -80,16 +81,20 @@ Content-Type: application/json
   "workitem_id":"0_0!023abf5d398319b1c8fcbfaf70e7c780!20151005-1247-kogadeso-gekunute",
   "participant":"alpha",
   "status":"active",
-  "fields": {
-    "params": {
-      "ref": "alpha"
+  "fields":{
+    "params":{
+      "ref":"alpha"
     }
-  }
+  },
+  "proceed_url":"http://core.dev/v1/workflows/20151005-1247-kogadeso-gekunute/workitems/0_0!023abf5d398319b1c8fcbfaf70e7c780!20151005-1247-kogadeso-gekunute/proceed"
 }
 ```
 
-The application should respond with a 2xx response code. If a 2xx response code
-is not received, the request will be retried.
+The application should respond with a 2xx response code in a timely manner. The
+intention for this callback is that the application will put a job in a queue
+and perform work later, not to actually perform the work during this callback
+request. If a 2xx response code is not received or a timeout occurs, the
+request will be retried.
 
 ## Proceed a workitem
 
