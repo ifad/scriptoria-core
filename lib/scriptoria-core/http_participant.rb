@@ -9,7 +9,7 @@ module ScriptoriaCore
   # the external application to reply straight away. The external application
   # makes a callback back to the API when it is ready for the workflow to
   # proceed, this makes it suitable for tasks such as asking for user input.
-  class HttpParticipant < Ruote::StorageParticipant
+  class HttpParticipant < ::Ruote::StorageParticipant
 
     # Handle the `on_workitem` event (triggered at the start of a participant).
     #

@@ -6,7 +6,6 @@ require 'bundler/setup'
 $: << File.expand_path("../../lib", __FILE__)
 
 require_relative '../config/environment'
+require 'scriptoria-core'
 
-RuoteKit.run_worker(
-  Ruote::Postgres::Storage.new($ruote_storage_connection)
-)
+ScriptoriaCore::Ruote.start_worker!

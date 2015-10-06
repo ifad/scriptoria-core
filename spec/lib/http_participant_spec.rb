@@ -9,7 +9,7 @@ describe ScriptoriaCore::HttpParticipant do
 
   before do
     stub_engine(engine)
-    allow(RuoteKit).to receive(:engine).and_return(engine)
+    allow(ScriptoriaCore::Ruote).to receive(:engine).and_return(engine)
   end
 
   context "#on_workitem" do

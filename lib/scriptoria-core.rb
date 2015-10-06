@@ -3,6 +3,7 @@ module ScriptoriaCore
   autoload :HttpParticipant, 'scriptoria-core/http_participant'
   autoload :Workflow,        'scriptoria-core/workflow'
   autoload :Workitem,        'scriptoria-core/workitem'
+  autoload :Ruote,           'scriptoria-core/ruote'
 
   def self.logger=(logger)
     @@logger = logger

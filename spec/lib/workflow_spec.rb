@@ -1,6 +1,12 @@
 require 'spec_helper'
 
 describe ScriptoriaCore::Workflow do
+  let(:engine) { double('ruote engine') }
+
+  before do
+    allow(ScriptoriaCore::Ruote).to receive(:engine).and_return(engine)
+  end
+
   context "#validate!" do
     it "validates a JSON workflow" do
       workflow = described_class.new(workflow: '[ "participant", { "ref" : "alpha" }, [] ]', callbacks: { "alpha" => "http://localhost:1234/callbacks/alpha" })
@@ -22,7 +28,7 @@ describe ScriptoriaCore::Workflow do
     let(:result) { "wfid1234" }
 
     before do
-      allow(RuoteKit.engine).to receive(:launch).and_return(result)
+      allow(engine).to receive(:launch).and_return(result)
     end
 
     subject {
@@ -30,7 +36,7 @@ describe ScriptoriaCore::Workflow do
     }
 
     it "saves the workflow in Ruote" do
-      expect(RuoteKit.engine).to receive(:launch).with('[ "participant", { "ref" : "alpha" }, [] ]', { callbacks: { 'alpha' => 'http://localhost:1234/callbacks/alpha' }}).and_return(result)
+      expect(ScriptoriaCore::Ruote.engine).to receive(:launch).with('[ "participant", { "ref" : "alpha" }, [] ]', { callbacks: { 'alpha' => 'http://localhost:1234/callbacks/alpha' }}).and_return(result)
 
       subject.save!
     end

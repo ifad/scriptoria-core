@@ -35,10 +35,10 @@ module ScriptoriaCore
     # @raise [WorkflowMismatchError] if the workflow ID doesn't match the
     #   workitem.
     def self.find(workflow_id, workitem_id)
-      hwi = RuoteKit.engine.storage.get('workitems', 'wi!' + workitem_id)
+      hwi = ScriptoriaCore::Ruote.engine.storage.get('workitems', 'wi!' + workitem_id)
       raise NotFoundError if hwi.nil?
 
-      ruote_workitem = Ruote::Workitem.new(hwi)
+      ruote_workitem = ::Ruote::Workitem.new(hwi)
       raise WorkflowMismatchError if workflow_id != ruote_workitem.wfid
 
       self.new(
@@ -147,7 +147,7 @@ module ScriptoriaCore
 
     # Returns the instance of HttpParticipant that is registered with Ruote.
     def participant
-      RuoteKit.engine.participant(participant_name)
+      ScriptoriaCore::Ruote.engine.participant(participant_name)
     end
 
     # To be called by the client application to prcoeed this workitem

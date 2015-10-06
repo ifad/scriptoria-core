@@ -8,5 +8,7 @@ $: << File.expand_path("../../lib", __FILE__)
 require_relative '../config/environment'
 require 'scriptoria-core'
 
+ScriptoriaCore::Ruote.start_engine!
+
 require 'irb'
 IRB.start

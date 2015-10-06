@@ -5,5 +5,6 @@ $: << 'lib'
 require_relative 'config/environment'
 require 'scriptoria-core'
 
-use RuoteKit::Application
+ScriptoriaCore::Ruote.start_engine!
+
 run ScriptoriaCore::Application

@@ -34,7 +34,7 @@ module ScriptoriaCore
     # @raise [WorkflowInvalidError] if the process definition is invalid.
     def validate!
       begin
-        Ruote::Reader.read(workflow)
+        ::Ruote::Reader.read(workflow)
       rescue Exception => e
         raise WorkflowInvalidError
       end
@@ -45,7 +45,7 @@ module ScriptoriaCore
     # @raise [WorkflowInvalidError] if the process definition is invalid.
     def save!
       validate!
-      self.id = RuoteKit.engine.launch(workflow, { callbacks: callbacks })
+      self.id = ScriptoriaCore::Ruote.engine.launch(workflow, { callbacks: callbacks })
       self
     end
 
