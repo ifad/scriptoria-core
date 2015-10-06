@@ -52,6 +52,11 @@ current workitem and participant. The application should do whatever work is
 required for this partiicpant step (send an email, wait for user input, etc)
 and then call the proceed action on the workitem.
 
+If a timeout or error occurs, another callback request will be made with a
+`status` of `timeout` or `error`. In this case the application should stop
+whatever work it is doing (if possible). Depending on how the workflow is setup
+to handle errors, the workitem or entire workflowmay be replayed.
+
 ### Parameters
 
 | Parameter    | Mandatory | Description                 |
@@ -59,7 +64,10 @@ and then call the proceed action on the workitem.
 | workflow\_id | Yes       | ID of the workflow          |
 | workitem\_id | Yes       | ID of the workitem          |
 | participant  | Yes       | Participant name            |
+| status       | Yes       | Status of the workitem      |
 | fields       | Yes       | Hash of the workitem fields |
+
+`status` can be `active` (the default), `timeout` or `error`.
 
 ### Example Request
 
@@ -71,6 +79,7 @@ Content-Type: application/json
   "workflow_id":"20151005-1247-kogadeso-gekunute",
   "workitem_id":"0_0!023abf5d398319b1c8fcbfaf70e7c780!20151005-1247-kogadeso-gekunute",
   "participant":"alpha",
+  "status":"active",
   "fields": {
     "params": {
       "ref": "alpha"

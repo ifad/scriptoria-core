@@ -75,6 +75,7 @@ describe ScriptoriaCore::Workitem do
         workflow_id: 'wfid123',
         workitem_id: '0!abc123!wfid123',
         participant: 'alpha',
+        status:      :active,
         fields: {
           "params" => { "ref" => "alpha" },
           "status" => "pending"
@@ -90,6 +91,40 @@ describe ScriptoriaCore::Workitem do
         "params" => { "ref" => "alpha" },
         "status" => "pending"
       })
+    end
+  end
+
+  context "#status" do
+    it "returns :active if the workitem is active" do
+      expect(subject.status). to eq :active
+    end
+
+    it "returns :timeout if the workitem has timed out" do
+      ruote_workitem.fields["__timed_out__"] = {}
+      expect(subject.status). to eq :timeout
+    end
+
+    it "returns :error if the workitem has an error" do
+      ruote_workitem.fields["__error__"] = {}
+      expect(subject.status). to eq :error
+    end
+  end
+
+  context "#reset_status!" do
+    it "resets the status when there is an timeout" do
+      ruote_workitem.fields["__timed_out__"] = {}
+      expect(subject.status). to eq :timeout
+
+      subject.reset_status!
+      expect(subject.status). to eq :active
+    end
+
+    it "resets the status when there is an error" do
+      ruote_workitem.fields["__error__"] = {}
+      expect(subject.status). to eq :error
+
+      subject.reset_status!
+      expect(subject.status). to eq :active
     end
   end
 
