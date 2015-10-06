@@ -16,4 +16,5 @@ group :development do
   gem 'rack-test'
   gem 'webmock'
   gem 'byebug'
+  gem 'simplecov'
 end
