@@ -19,8 +19,11 @@ module ScriptoriaCore
     # in one minute.
     def on_workitem
       ScriptoriaCore.logger.info "On workitem"
-      re_dispatch(in: '60s') unless make_callback_request!(true)
+      re_dispatch(in: '60s') unless make_callback_request!(:active)
       super
+    rescue Exception => e
+      ScriptoriaCore.logger.error "Got error #{e.inspect} for #{workitem.inspect}"
+      raise e
     end
 
     # Handle the `on_cancel` event (triggerd when an error or timeout occurs).
@@ -30,7 +33,7 @@ module ScriptoriaCore
     # occurs no retries are performed.
     def on_cancel
       ScriptoriaCore.logger.info "On cancel"
-      make_callback_request!
+      make_callback_request!(:cancel)
       super
     end
 
@@ -43,23 +46,25 @@ module ScriptoriaCore
     # An exception will be raised if no callback URL is set for the pariticant,
     # see {ScriptoriaCore::Workitem#callback_url} for more details.
     #
-    # @param reset_status [boolean] Resets the workitem status. See
-    #   {ScriptoriaCore::Workitem#reset_status!} for more details.
+    # The state of the workitem depends on the participant callback, if it is
+    # received in the `on_workitem` callback the state should be `active`, if
+    # received in the `on_cancel` callback the state should be `cancel`.
+    #
+    # @param state [symbol] State of the workitem, `active` or `cancel`.
     #
     # @raise [MissingCallbackUrl] if no callback URL is set for the
     #   participant.
     #
     # @return [boolean] `true` if the request was successful, `false`
     #   otherwise.
-    def make_callback_request!(reset_status = false)
+    def make_callback_request!(state)
       sc_workitem = ScriptoriaCore::Workitem.from_ruote_workitem(workitem)
-      sc_workitem.reset_status! if reset_status
 
       ScriptoriaCore.logger.info "Making request to `#{sc_workitem.callback_url}' for `#{sc_workitem.participant_name}'"
 
       request = HTTPI::Request.new
       request.url     = sc_workitem.callback_url
-      request.body    = sc_workitem.callback_payload.to_json
+      request.body    = sc_workitem.callback_payload(state).to_json
       request.headers = {
         "Content-Type" => "application/json"
       }

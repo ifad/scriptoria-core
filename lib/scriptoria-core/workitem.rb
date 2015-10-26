@@ -79,37 +79,33 @@ module ScriptoriaCore
     # workitem, then the `on_error` method is called on a participant. We use
     # this to generate the `status` field which is sent in the callback.
     #
+    # @param default_status [symbol] Default status if there is no error status
+    #
     # @return [Symbol] Workitem status, one of `:active`, `:timeout` or
     #   `:error`.
-    def status
+    def status(default_status = :active)
       if _workitem.fields.has_key?("__timed_out__")
         :timeout
       elsif _workitem.fields.has_key?("__error__")
         :error
       else
-        :active
+        default_status
       end
-    end
-
-    # Resets the workitem status to `active`.
-    #
-    # This is a bit of a hack to handle a Ruote limitation, when an error or
-    # timeout occurs one of these fields is set on the workitem, then the
-    # `on_error` method is called on a participant. We use this to generate the
-    # `status` field which is sent in the callback. When a workitem is
-    # replayed, it still contains these fields so we don't obviously want to
-    # send a failure status to the client, as such this temporarily (in the
-    # instance only, it's not saved) wipes them.
-    def reset_status!
-      _workitem.fields.delete("__timed_out__")
-      _workitem.fields.delete("__error__")
     end
 
     # Returns the callback payload to be sent in callback requests to external
     # applications.
     #
+    # @param state [symbol] State of the workitem, `active` or `cancel`.
+    #
     # @return [Hash] callback payload.
-    def callback_payload
+    def callback_payload(state)
+      status = if state == :active
+                 :active
+               else
+                 self.status(state)
+               end
+
       {
         workflow_id: workflow_id,
         workitem_id: id,

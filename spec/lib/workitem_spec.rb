@@ -71,7 +71,7 @@ describe ScriptoriaCore::Workitem do
     end
 
     it "returns the callback payload" do
-      expect(subject.callback_payload).to eq({
+      expect(subject.callback_payload(:active)).to eq({
         workflow_id: 'wfid123',
         workitem_id: '0!abc123!wfid123',
         participant: 'alpha',
@@ -82,6 +82,27 @@ describe ScriptoriaCore::Workitem do
         },
         proceed_url: "http://example.com/v1/workflows/wfid123/workitems/0!abc123!wfid123/proceed"
       })
+    end
+
+    it "returns the status 'active' when active" do
+      expect(subject.callback_payload(:active)[:status]).to eq :active
+
+      ruote_workitem.fields["__timed_out__"] = {}
+      expect(subject.callback_payload(:active)[:status]).to eq :active
+    end
+
+    it "returns the status 'cancel' when cancelled" do
+      expect(subject.callback_payload(:cancel)[:status]).to eq :cancel
+    end
+
+    it "returns the status 'timeout' when timed out" do
+      ruote_workitem.fields["__timed_out__"] = {}
+      expect(subject.callback_payload(:cancel)[:status]).to eq :timeout
+    end
+
+    it "returns the status 'error' when an error occured" do
+      ruote_workitem.fields["__error__"] = {}
+      expect(subject.callback_payload(:cancel)[:status]).to eq :error
     end
   end
 
@@ -99,6 +120,10 @@ describe ScriptoriaCore::Workitem do
       expect(subject.status). to eq :active
     end
 
+    it "returns :active if the workitem is cancelled" do
+      expect(subject.status(:cancel)). to eq :cancel
+    end
+
     it "returns :timeout if the workitem has timed out" do
       ruote_workitem.fields["__timed_out__"] = {}
       expect(subject.status). to eq :timeout
@@ -107,24 +132,6 @@ describe ScriptoriaCore::Workitem do
     it "returns :error if the workitem has an error" do
       ruote_workitem.fields["__error__"] = {}
       expect(subject.status). to eq :error
-    end
-  end
-
-  context "#reset_status!" do
-    it "resets the status when there is an timeout" do
-      ruote_workitem.fields["__timed_out__"] = {}
-      expect(subject.status). to eq :timeout
-
-      subject.reset_status!
-      expect(subject.status). to eq :active
-    end
-
-    it "resets the status when there is an error" do
-      ruote_workitem.fields["__error__"] = {}
-      expect(subject.status). to eq :error
-
-      subject.reset_status!
-      expect(subject.status). to eq :active
     end
   end
 

@@ -68,7 +68,7 @@ to handle errors, the workitem or entire workflowmay be replayed.
 | fields       | Yes       | Hash of the workitem fields         |
 | proceed\_url | Yes       | URL to call to proceed the workitem |
 
-`status` can be `active` (the default), `timeout` or `error`.
+`status` can be `active` (the default), `cancel`, `timeout` or `error`.
 
 ### Example Request
 
