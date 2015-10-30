@@ -34,6 +34,17 @@ describe ScriptoriaCore::HttpParticipant do
       subject.on_workitem
     end
 
+    it "makes a POST request to the catch-all URL if present" do
+      workitem.h.fields["callbacks"] = "http://localhost:1234/callbacks"
+
+      stub_request(:post, "http://localhost:1234/callbacks").
+        to_return(:status => 200)
+
+      subject.on_workitem
+
+      expect(WebMock).to have_requested(:post, "http://localhost:1234/callbacks")
+    end
+
     it "requeues the workitem when a non 200 request is received" do
       stub_request(:post, "http://localhost:1234/callback/alpha").
         to_return(:status => 500)
@@ -50,6 +61,13 @@ describe ScriptoriaCore::HttpParticipant do
       expect(subject).to receive(:re_dispatch).with(in: '60s')
 
       subject.on_workitem
+    end
+
+    it "raises an error when there is no callback url found" do
+      workitem.h.participant_name = 'nothing'
+      expect {
+        subject.on_workitem
+      }.to raise_error(ScriptoriaCore::Workitem::MissingCallbackUrl)
     end
   end
 

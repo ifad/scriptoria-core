@@ -12,12 +12,18 @@ definitions are not currently stored in the application.
 | Parameter | Mandatory | Description              |
 |-----------|-----------|--------------------------|
 | workflow  | Yes       | Ruote process defintion  |
-| callbacks | Yes       | Hash of callback URLs    |
+| callback  | No        | Catch-all callback URL   |
+| callbacks | No        | Hash of callback URLs    |
 
 `workflow` is a [process definition](http://ruote.io/definitions.html) in any
 format that Ruote will understand (XML, JSON, Radial).
 
+`callback` is a catch-all callback URL, that will be used for all participants.
+
 `callbacks` is a hash of callback URLs, where the key is the participant name.
+
+Exactly one of `callback` or `callbacks` must be passed - an error will be
+returned otherwise.
 
 ### Example Request
 

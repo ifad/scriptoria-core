@@ -33,6 +33,17 @@ describe ScriptoriaCore::Application do
       expect(response.status).to eq 201
     end
 
+    it "creates a workflow with a catch all callback" do
+      expect(ScriptoriaCore::Workflow).to receive(:create!).with('[ "participant", { "ref" : "alpha" }, [] ]', 'http://localhost:1234/callback/alpha').and_return(workflow)
+
+      post '/v1/workflows', {
+        'workflow' => '[ "participant", { "ref" : "alpha" }, [] ]',
+        'callback' => 'http://localhost:1234/callback/alpha'
+      }
+
+      expect(response.status).to eq 201
+    end
+
     context "validations" do
       it "returns an error if the workflow is missing" do
         post '/v1/workflows', {
@@ -65,7 +76,7 @@ describe ScriptoriaCore::Application do
         }
 
         expect(response.status).to eq 400
-        expect(response.body).to   eq '{"error":"callbacks is missing"}'
+        expect(response.body).to   eq '{"error":"callback, callbacks are missing, exactly one parameter must be provided"}'
       end
     end
   end

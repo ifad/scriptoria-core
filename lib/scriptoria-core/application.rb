@@ -16,7 +16,9 @@ module ScriptoriaCore
     resource :workflows do
       params do
         requires :workflow,  type: String
-        requires :callbacks, type: Hash
+        optional :callback,  type: String
+        optional :callbacks, type: Hash
+        exactly_one_of :callback, :callbacks
       end
 
       rescue_from Workflow::WorkflowInvalidError do |e|
@@ -26,7 +28,7 @@ module ScriptoriaCore
       post do
         workflow = Workflow.create!(
           params[:workflow],
-          params[:callbacks]
+          params[:callback] || params[:callbacks]
         )
 
         {

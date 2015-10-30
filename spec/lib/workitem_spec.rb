@@ -63,6 +63,11 @@ describe ScriptoriaCore::Workitem do
       allow(subject).to receive(:participant_name).and_return('other')
       expect { subject.callback_url }.to raise_error(ScriptoriaCore::Workitem::MissingCallbackUrl)
     end
+
+    it "returns the url for a catch-all callback" do
+      ruote_workitem.h.fields["callbacks"] = "http://localhost:1234/callbacks"
+      expect(subject.callback_url).to eq "http://localhost:1234/callbacks"
+    end
   end
 
   context "#callback_payload" do

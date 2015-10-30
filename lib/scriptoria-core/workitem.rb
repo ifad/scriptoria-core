@@ -65,7 +65,11 @@ module ScriptoriaCore
     # @return [String] callback URL.
     # @raise [MissingCallbackUrl] if no URL is set for the active participant.
     def callback_url
-      url = _workitem.fields['callbacks'][participant_name]
+      url = if _workitem.fields['callbacks'].is_a?(String)
+              _workitem.fields['callbacks']
+            else
+              _workitem.fields['callbacks'][participant_name]
+            end
       if url.nil?
         raise MissingCallbackUrl
       else

@@ -10,7 +10,7 @@ module ScriptoriaCore
     # @return [String] Ruote process definition.
     attr_accessor :workflow
 
-    # @return [Hash] Callback URLs.
+    # @return [Hash/String] Callback URLs.
     attr_accessor :callbacks
 
     # Creates and launches a workflow in Ruote.
