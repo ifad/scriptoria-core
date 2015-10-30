@@ -9,6 +9,8 @@ gem 'grape'
 gem 'grape_logging'
 gem 'httpi'
 
+gem 'ruote-kit'
+
 group :development do
   gem 'unicorn'
   gem 'rspec'
