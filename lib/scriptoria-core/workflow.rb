@@ -1,4 +1,4 @@
-require 'ruote'
+require 'ruote/reader'
 
 module ScriptoriaCore
   # This class abstracts a Ruote workflow.
