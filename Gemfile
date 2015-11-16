@@ -1,5 +1,7 @@
 source "https://rubygems.org"
 
+ruby '2.2.3'
+
 gem 'ruote',          github: 'jmettraux/ruote'
 gem 'ruote-postgres', github: 'ifad/ruote-postgres'
 
