@@ -1,13 +1,11 @@
 GIT
   remote: git://github.com/ifad/ruote-postgres.git
-  revision: 7b34858e46bd57f53e7f325904a4acd91ec332b8
+  revision: 2c550ab00d2535eb653ee98e0d2dd8a3a7505158
   specs:
     ruote-postgres (0.0.1)
-      json
       pg
       rake
       ruote
-      yajl-ruby
 
 GIT
   remote: git://github.com/jmettraux/ruote.git
@@ -52,7 +50,7 @@ GEM
     docile (1.1.5)
     dotenv (2.0.2)
     equalizer (0.0.11)
-    file-tail (1.1.0)
+    file-tail (1.1.1)
       tins (~> 1.0)
     grape (0.13.0)
       activesupport
@@ -80,7 +78,7 @@ GEM
     multi_xml (0.5.5)
     parslet (1.4.0)
       blankslate (~> 2.0)
-    pg (0.18.3)
+    pg (0.18.4)
     rack (1.6.4)
     rack-accept (0.4.5)
       rack (>= 0.4)
@@ -91,7 +89,7 @@ GEM
     rack-test (0.6.3)
       rack (>= 1.0)
     raindrops (0.15.0)
-    rake (10.4.2)
+    rake (11.1.2)
     rspec (3.3.0)
       rspec-core (~> 3.3.0)
       rspec-expectations (~> 3.3.0)
@@ -115,7 +113,7 @@ GEM
     rufus-dollar (1.0.4)
     rufus-json (1.0.6)
     rufus-mnemo (1.2.3)
-    rufus-scheduler (3.1.6)
+    rufus-scheduler (3.2.1)
     rufus-treechecker (1.0.8)
       ruby_parser (>= 2.0.5)
     ruote-kit (2.3.0.2)
@@ -144,7 +142,7 @@ GEM
       sexp_processor (>= 3.0.5)
     thread_safe (0.3.5)
     tilt (2.0.1)
-    tins (1.6.0)
+    tins (1.10.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     unicorn (4.9.0)
@@ -183,4 +181,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   1.10.6
+   1.12.3
