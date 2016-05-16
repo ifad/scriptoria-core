@@ -8,4 +8,5 @@ $: << File.expand_path("../../lib", __FILE__)
 require_relative '../config/environment'
 require 'scriptoria-core'
 
+ScriptoriaCore.logger.info "Starting Scriptoria Core #{ScriptoriaCore::VERSION} worker"
 ScriptoriaCore::Ruote.start_worker!

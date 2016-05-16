@@ -1,3 +1,5 @@
+require 'scriptoria-core/version'
+
 module ScriptoriaCore
   autoload :Application,     'scriptoria-core/application'
   autoload :HttpParticipant, 'scriptoria-core/http_participant'
