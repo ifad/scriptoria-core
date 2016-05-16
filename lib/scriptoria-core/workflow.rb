@@ -50,6 +50,7 @@ module ScriptoriaCore
     def save!
       validate!
       self.id = ScriptoriaCore::Ruote.engine.launch(workflow, launch_fields)
+      ScriptoriaCore.logger.info "Launched workflow #{self.id} with payload #{launch_fields.to_json}"
       self
     end
 

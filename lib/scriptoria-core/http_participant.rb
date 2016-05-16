@@ -59,12 +59,14 @@ module ScriptoriaCore
     #   otherwise.
     def make_callback_request!(state)
       sc_workitem = ScriptoriaCore::Workitem.from_ruote_workitem(workitem)
+      payload     = sc_workitem.callback_payload(state).to_json
 
       ScriptoriaCore.logger.info "Making request to `#{sc_workitem.callback_url}' for `#{sc_workitem.participant_name}'"
+      ScriptoriaCore.logger.info "Payload: #{payload}"
 
       request = HTTPI::Request.new
       request.url     = sc_workitem.callback_url
-      request.body    = sc_workitem.callback_payload(state).to_json
+      request.body    = payload
       request.headers = {
         "Content-Type" => "application/json"
       }
