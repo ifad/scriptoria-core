@@ -21,7 +21,7 @@ describe ScriptoriaCore::Application do
     end
 
     it "creates a workflow" do
-      expect(ScriptoriaCore::Workflow).to receive(:create!).with('[ "participant", { "ref" : "alpha" }, [] ]', { 'alpha' => 'http://localhost:1234/callback/alpha' }).and_return(workflow)
+      expect(ScriptoriaCore::Workflow).to receive(:create!).with('[ "participant", { "ref" : "alpha" }, [] ]', { 'alpha' => 'http://localhost:1234/callback/alpha' }, nil).and_return(workflow)
 
       post '/v1/workflows', {
         'workflow' => '[ "participant", { "ref" : "alpha" }, [] ]',
@@ -34,11 +34,28 @@ describe ScriptoriaCore::Application do
     end
 
     it "creates a workflow with a catch all callback" do
-      expect(ScriptoriaCore::Workflow).to receive(:create!).with('[ "participant", { "ref" : "alpha" }, [] ]', 'http://localhost:1234/callback/alpha').and_return(workflow)
+      expect(ScriptoriaCore::Workflow).to receive(:create!).with('[ "participant", { "ref" : "alpha" }, [] ]', 'http://localhost:1234/callback/alpha', nil).and_return(workflow)
 
       post '/v1/workflows', {
         'workflow' => '[ "participant", { "ref" : "alpha" }, [] ]',
         'callback' => 'http://localhost:1234/callback/alpha'
+      }
+
+      expect(response.status).to eq 201
+    end
+
+    it "creates a workflow with fields" do
+      expect(ScriptoriaCore::Workflow).to receive(:create!).with('[ "participant", { "ref" : "alpha" }, [] ]', 'http://localhost:1234/callback/alpha', { "assignee" => "j.smith", "acl" => { "uid:j.smith" => "assignee" } }).and_return(workflow)
+
+      post '/v1/workflows', {
+        'workflow' => '[ "participant", { "ref" : "alpha" }, [] ]',
+        'callback' => 'http://localhost:1234/callback/alpha',
+        'fields'   => {
+          'assignee' => 'j.smith',
+          'acl' => {
+            'uid:j.smith' => 'assignee'
+          }
+        }
       }
 
       expect(response.status).to eq 201

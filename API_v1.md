@@ -9,11 +9,12 @@ definitions are not currently stored in the application.
 
 ### Parameters
 
-| Parameter | Mandatory | Description              |
-|-----------|-----------|--------------------------|
-| workflow  | Yes       | Ruote process defintion  |
-| callback  | No        | Catch-all callback URL   |
-| callbacks | No        | Hash of callback URLs    |
+| Parameter | Mandatory | Description                        |
+|-----------|-----------|------------------------------------|
+| workflow  | Yes       | Ruote process defintion            |
+| callback  | No        | Catch-all callback URL             |
+| callbacks | No        | Hash of callback URLs              |
+| fields    | No        | Intial hash of the workitem fields |
 
 `workflow` is a [process definition](http://ruote.io/definitions.html) in any
 format that Ruote will understand (XML, JSON, Radial).
@@ -24,6 +25,9 @@ format that Ruote will understand (XML, JSON, Radial).
 
 Exactly one of `callback` or `callbacks` must be passed - an error will be
 returned otherwise.
+
+`fields` is the initial workitem fields. These will be passed on subsequent
+callbacks requests.
 
 ### Example Request
 

@@ -13,14 +13,18 @@ module ScriptoriaCore
     # @return [Hash/String] Callback URLs.
     attr_accessor :callbacks
 
+    # @return [Hash] Default workitem payload.
+    attr_accessor :fields
+
     # Creates and launches a workflow in Ruote.
     #
     # @param workflow [String] A process definition in any format Ruote can
     #   understand (XML, JSON, Radial).
     # @param callbacks [Hash] Callback URLs.
+    # @param fields    [Hash] Default workitem payload.
     # @raise [WorkflowInvalidError] if the process definition is invalid.
-    def self.create!(workflow, callbacks)
-      new(workflow: workflow, callbacks: callbacks).save!
+    def self.create!(workflow, callbacks, fields = {})
+      new(workflow: workflow, callbacks: callbacks, fields: fields).save!
     end
 
     def initialize(attributes = {})
@@ -45,10 +49,16 @@ module ScriptoriaCore
     # @raise [WorkflowInvalidError] if the process definition is invalid.
     def save!
       validate!
-      self.id = ScriptoriaCore::Ruote.engine.launch(workflow, { callbacks: callbacks })
+      self.id = ScriptoriaCore::Ruote.engine.launch(workflow, launch_fields)
       self
     end
 
     class WorkflowInvalidError < StandardError; end
+
+    protected
+
+    def launch_fields
+      (fields || {}).merge({ callbacks: callbacks })
+    end
   end
 end

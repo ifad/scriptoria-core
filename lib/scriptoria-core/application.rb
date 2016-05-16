@@ -18,6 +18,7 @@ module ScriptoriaCore
         requires :workflow,  type: String
         optional :callback,  type: String
         optional :callbacks, type: Hash
+        optional :fields,    type: Hash
         exactly_one_of :callback, :callbacks
       end
 
@@ -28,7 +29,8 @@ module ScriptoriaCore
       post do
         workflow = Workflow.create!(
           params[:workflow],
-          params[:callback] || params[:callbacks]
+          params[:callback] || params[:callbacks],
+          params[:fields]
         )
 
         {

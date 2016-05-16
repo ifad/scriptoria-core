@@ -31,19 +31,45 @@ describe ScriptoriaCore::Workflow do
       allow(engine).to receive(:launch).and_return(result)
     end
 
-    subject {
-      described_class.new(workflow: '[ "participant", { "ref" : "alpha" }, [] ]', callbacks: { "alpha" => "http://localhost:1234/callbacks/alpha" })
-    }
+    context "without fields" do
+      subject {
+        described_class.new(
+          workflow:  '[ "participant", { "ref" : "alpha" }, [] ]',
+          callbacks: { "alpha" => "http://localhost:1234/callbacks/alpha" }
+        )
+      }
 
-    it "saves the workflow in Ruote" do
-      expect(ScriptoriaCore::Ruote.engine).to receive(:launch).with('[ "participant", { "ref" : "alpha" }, [] ]', { callbacks: { 'alpha' => 'http://localhost:1234/callbacks/alpha' }}).and_return(result)
+      it "saves the workflow in Ruote" do
+        expect(ScriptoriaCore::Ruote.engine).to receive(:launch).with('[ "participant", { "ref" : "alpha" }, [] ]', { callbacks: { 'alpha' => 'http://localhost:1234/callbacks/alpha' }}).and_return(result)
 
-      subject.save!
+        subject.save!
+      end
+
+      it "assigns the workflow id" do
+        subject.save!
+        expect(subject.id).to eq 'wfid1234'
+      end
     end
 
-    it "assigns the workflow id" do
-      subject.save!
-      expect(subject.id).to eq 'wfid1234'
+    context "with fields" do
+      subject {
+        described_class.new(
+          workflow:  '[ "participant", { "ref" : "alpha" }, [] ]',
+          callbacks: { "alpha" => "http://localhost:1234/callbacks/alpha" },
+          fields:    { 'assignee' => 'j.smith' }
+        )
+      }
+
+      it "saves the workflow in Ruote" do
+        expect(ScriptoriaCore::Ruote.engine).to receive(:launch).with('[ "participant", { "ref" : "alpha" }, [] ]', { 'assignee' => 'j.smith', callbacks: { 'alpha' => 'http://localhost:1234/callbacks/alpha' }}).and_return(result)
+
+        subject.save!
+      end
+
+      it "assigns the workflow id" do
+        subject.save!
+        expect(subject.id).to eq 'wfid1234'
+      end
     end
   end
 end
