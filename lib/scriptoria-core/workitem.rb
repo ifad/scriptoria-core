@@ -121,11 +121,14 @@ module ScriptoriaCore
     end
 
     # Reader for public fields in the workitem.
+    #
+    # This returns a frozen hash. To update the fields you need to use
+    # #update_fields.
     def fields
       fields = _workitem.fields.dup
       fields.delete("callbacks")
       fields.delete("dispatched_at")
-      fields
+      fields.freeze
     end
 
     # Merges `fields` with the existing fields on the workitem, with those
