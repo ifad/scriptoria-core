@@ -45,6 +45,14 @@ module ScriptoriaCore
         )
         @engine.join
       end
+
+      # Returns the current workitems in Ruote. For use when debugging.
+      # @return Array[ScriptoriaCore::Workitem]
+      def workitems
+        @engine.storage_participant.map do |wi|
+          ScriptoriaCore::Workitem.from_ruote_workitem(wi)
+        end
+      end
     end
   end
 end

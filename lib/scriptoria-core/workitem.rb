@@ -145,6 +145,12 @@ module ScriptoriaCore
       participant.proceed(_workitem)
     end
 
+    # Uses https://github.com/jmettraux/ruote/commit/33a407f to update a
+    # workitem. Only intended for debugging, use with caution!
+    def save!
+      ScriptoriaCore::Ruote.engine.storage_participant.do_update(_workitem)
+    end
+
     protected
 
     # Returns the instance of HttpParticipant that is registered with Ruote.
