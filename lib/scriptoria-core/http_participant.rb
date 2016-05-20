@@ -33,7 +33,7 @@ module ScriptoriaCore
     # Handle the `on_cancel` event (triggerd when an error or timeout occurs).
     #
     # Performs the HTTP request to the external application with the status of
-    # `active`, to tell the application to stop performing work. If an error
+    # `cancel`, to tell the application to stop performing work. If an error
     # occurs no retries are performed.
     def on_cancel
       ScriptoriaCore.logger.info "On cancel"

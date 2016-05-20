@@ -65,7 +65,12 @@ and then call the proceed action on the workitem.
 If a timeout or error occurs, another callback request will be made with a
 `status` of `timeout` or `error`. In this case the application should stop
 whatever work it is doing (if possible). Depending on how the workflow is setup
-to handle errors, the workitem or entire workflowmay be replayed.
+to handle errors, the workitem or entire workflow may be replayed.
+
+If the status is `active` and a callback request fails, it will be retried with
+exponential backoff. The final retry will be made after approximately two days,
+after which an error will be raised. If the workflow has an `on_error` handler
+it will be called, otherwise the workflow will be put into an error state.
 
 ### Parameters
 
@@ -147,3 +152,38 @@ workflow.
 
 If called more than once, an error will be returned saying the workitem can't
 be found - this is due to a Ruote limitation.
+
+## Cancel a workflow
+
+    POST /v1/workflows/:workflow_id/cancel
+
+Initiates cancellation of the workflow. All active participants will be called
+again with the status `cancel`, and then the workflow will be terminated.
+
+Note that after making this request and receiving a successful response, a
+participant callback could still be made with the status `active`, which will
+be followed by a callback with the status `cancel`.
+
+### Parameters
+
+| Parameter    | Mandatory | Description        |
+|--------------|-----------|--------------------|
+| workflow\_id | Yes       | ID of the workflow |
+
+### Example Request
+
+```
+curl http://core.dev/v1/workflows/20151005-1247-kogadeso-gekunute/cancel
+```
+
+### Example Response
+
+```
+HTTP/1.1 201 Accepted
+OK
+```
+
+### Errors
+
+An error will be returned if the workflow doesn't exist or it has already been
+cancelled.

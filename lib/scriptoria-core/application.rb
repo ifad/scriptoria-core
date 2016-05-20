@@ -39,6 +39,21 @@ module ScriptoriaCore
       end
 
       route_param :workflow_id do
+
+        params do
+          requires :workflow_id, type: String
+        end
+
+        rescue_from Workflow::NotFoundError do |e|
+          error!('workflow_id not found', 400)
+        end
+
+        post :cancel do
+          Workflow.cancel!(
+            params[:workflow_id]
+          )
+        end
+
         resource :workitems do
           route_param :workitem_id do
 

@@ -27,6 +27,31 @@ module ScriptoriaCore
       new(workflow: workflow, callbacks: callbacks, fields: fields).save!
     end
 
+    # Initiates cancellation of a workflow.
+    #
+    # Will call `on_cancel` on all active participants, and remove schedules
+    # and erros.
+    #
+    # @param workflow_id [String] Workflow ID
+    #
+    # @raise [NotFoundError] if the workflow doesn't exist in Ruote.
+    def self.cancel!(workflow_id)
+      process = ScriptoriaCore::Ruote.engine.process(workflow_id)
+      raise NotFoundError if process.nil?
+
+      # Initiate cancellation of the process
+      ScriptoriaCore::Ruote.engine.cancel_process(workflow_id)
+
+      # Delete errors and scheduled items. This isn't really the right way to
+      # clean up as errors or schedules could be added after this, while the
+      # process is being cancelled, due to race conditions.
+      %w{ errors schedules }.each do |type|
+        ScriptoriaCore::Ruote.storage.get_many(type, workflow_id).each do |doc|
+          ScriptoriaCore::Ruote.storage.delete(doc)
+        end
+      end
+    end
+
     def initialize(attributes = {})
       attributes.each do |k, v|
         send("#{k}=", v)
@@ -55,6 +80,7 @@ module ScriptoriaCore
     end
 
     class WorkflowInvalidError < StandardError; end
+    class NotFoundError        < StandardError; end
 
     protected
 

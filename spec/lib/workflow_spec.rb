@@ -7,6 +7,28 @@ describe ScriptoriaCore::Workflow do
     allow(ScriptoriaCore::Ruote).to receive(:engine).and_return(engine)
   end
 
+  context "::cancel!" do
+    subject {
+      ScriptoriaCore::Workflow.cancel!('1234')
+    }
+
+    before do
+      allow(ScriptoriaCore::Ruote.engine).to receive(:process).and_return(double('Process'))
+    end
+
+    it "it cancels the workflow" do
+      expect(ScriptoriaCore::Ruote.engine).to receive(:cancel_process).with('1234').and_return(true)
+      subject
+    end
+
+    it "raises NotFoundError if the workflow doesn't exist" do
+      allow(ScriptoriaCore::Ruote.engine).to receive(:process).and_return(nil)
+      expect {
+        subject
+      }.to raise_error(ScriptoriaCore::Workflow::NotFoundError)
+    end
+  end
+
   context "#validate!" do
     it "validates a JSON workflow" do
       workflow = described_class.new(workflow: '[ "participant", { "ref" : "alpha" }, [] ]', callbacks: { "alpha" => "http://localhost:1234/callbacks/alpha" })
