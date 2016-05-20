@@ -11,15 +11,19 @@ module ScriptoriaCore
   # proceed, this makes it suitable for tasks such as asking for user input.
   class HttpParticipant < ::Ruote::StorageParticipant
 
+    # The maximum number of retries to attempt. After this instead of retrying,
+    # the `RetriesExceededError` will be raised.
+    MAX_RETRIES = 10
+
     # Handle the `on_workitem` event (triggered at the start of a participant).
     #
     # Performs the HTTP request to the external application with the status of
     # `active`, to tell the application to start performing work. If an error
-    # occurs the workitem is redispatched, so that the request will be retried,
-    # in one minute.
+    # occurs during the HTTP request, the workitem is redispatched and the
+    # request will be retried (see `#attempt_retry`).
     def on_workitem
       ScriptoriaCore.logger.info "On workitem"
-      re_dispatch(in: '60s') unless make_callback_request!(:active)
+      attempt_retry unless make_callback_request!(:active)
       super
     rescue Exception => e
       ScriptoriaCore.logger.error "Got error #{e.inspect} for #{workitem.inspect}"
@@ -83,6 +87,45 @@ module ScriptoriaCore
         ScriptoriaCore.logger.info "Exception occured: #{e.inspect}"
         false
       end
+    end
+
+    # Raised when the number of retries has been exceeded. If you have an
+    # `on_error` handler in the workflow it will be called, otherwise the
+    # workflow will be put into an error state.
+    class RetriesExceededError < StandardError; end
+
+    protected
+
+    # Attempt to redispatch the workflow, with expontential backoff between
+    # retries. After `MAX_RETRIES` we give up and raise `RetriesExceededError`.
+    def attempt_retry
+      retry_count = workitem.re_dispatch_count
+
+      if retry_count <= MAX_RETRIES
+        delay = seconds_to_delay(retry_count)
+
+        ScriptoriaCore.logger.info "Retry in #{delay} seconds"
+        re_dispatch(in: "#{delay}s")
+      else
+        raise RetriesExceededError
+      end
+    end
+
+    # Returns the number of seconds to delay until the next retry.
+    #
+    # Retry 0  - T0 +     30 (30s)
+    # Retry 1  - T0 +     61 (1m)
+    # Retry 2  - T0 +    123 (2m)
+    # Retry 3  - T0 +    396 (6m)
+    # Retry 4  - T0 +   1450 (24m)
+    # Retry 5  - T0 +   4605 (1h)
+    # Retry 6  - T0 +  12411 (3h)
+    # Retry 7  - T0 +  29248 (8h)
+    # Retry 8  - T0 +  62046 (17h)
+    # Retry 9  - T0 + 121125 (1d)
+    # Retry 10 - T0 + 221155 (2d)
+    def seconds_to_delay(count)
+      (count ** 5) + 30
     end
   end
 end
