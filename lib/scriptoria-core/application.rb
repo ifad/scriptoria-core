@@ -13,6 +13,11 @@ module ScriptoriaCore
     logger.formatter = GrapeLogging::Formatters::Default.new
     use GrapeLogging::Middleware::RequestLogger, { logger: logger }
 
+    format :json
+    get '/ping' do
+      { ping: 'pong' }
+    end
+
     resource :workflows do
       params do
         requires :workflow,  type: String
