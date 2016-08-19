@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/ifad/ruote-postgres.git
-  revision: 2c550ab00d2535eb653ee98e0d2dd8a3a7505158
+  revision: 70b90bed7f6de957286ba63347b8d626496ba6e9
   specs:
     ruote-postgres (0.0.1)
       pg
@@ -89,7 +89,7 @@ GEM
     rack-test (0.6.3)
       rack (>= 1.0)
     raindrops (0.15.0)
-    rake (11.1.2)
+    rake (11.2.2)
     rspec (3.3.0)
       rspec-core (~> 3.3.0)
       rspec-expectations (~> 3.3.0)
@@ -113,7 +113,7 @@ GEM
     rufus-dollar (1.0.4)
     rufus-json (1.0.6)
     rufus-mnemo (1.2.3)
-    rufus-scheduler (3.2.1)
+    rufus-scheduler (3.2.2)
     rufus-treechecker (1.0.8)
       ruby_parser (>= 2.0.5)
     ruote-kit (2.3.0.2)
@@ -142,7 +142,7 @@ GEM
       sexp_processor (>= 3.0.5)
     thread_safe (0.3.5)
     tilt (2.0.1)
-    tins (1.10.1)
+    tins (1.12.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     unicorn (4.9.0)
@@ -181,4 +181,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   1.12.3
+   1.12.5
