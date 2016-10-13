@@ -124,6 +124,13 @@ module ScriptoriaCore
     # Retry 8  - T0 +  62046 (17h)
     # Retry 9  - T0 + 121125 (1d)
     # Retry 10 - T0 + 221155 (2d)
+    #
+    #
+    # To manually retry a workitem now, run this from the console:
+    #
+    #     wi = ScriptoriaCore::Ruote.engine.storage_participant['0_0_1!45dec1d6303c7e58377745e77c33ac82!20161012-1414-nogodepa-dirunobi']
+    #     ScriptoriaCore::Ruote.engine.storage_participant.re_dispatch(wi, in: '1s')
+    #
     def seconds_to_delay(count)
       (count ** 5) + 30
     end
