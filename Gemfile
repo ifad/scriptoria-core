@@ -1,14 +1,7 @@
 source "https://rubygems.org"
 
-# Force Github URLs to use HTTPS (which will be the default in Bundler 2) so it
-# works over VPN
-git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
-  "https://github.com/#{repo_name}.git"
-end
-
-gem 'ruote',          github: 'jmettraux/ruote'
-gem 'ruote-postgres', github: 'ifad/ruote-postgres'
+gem 'ruote',          git: 'git@github.com:jmettraux/ruote'
+gem 'ruote-postgres', git: 'git@github.com:ifad/ruote-postgres'
 
 gem 'dotenv'
 gem 'yajl-ruby'
