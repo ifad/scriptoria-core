@@ -1,5 +1,5 @@
 GIT
-  remote: https://github.com/ifad/ruote-postgres
+  remote: https://github.com/ifad/ruote-postgres.git
   revision: 70b90bed7f6de957286ba63347b8d626496ba6e9
   specs:
     ruote-postgres (0.0.1)

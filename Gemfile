@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 gem 'ruote',          git: 'https://github.com/jmettraux/ruote.git'
-gem 'ruote-postgres', git: 'https://github.com/ifad/ruote-postgres'
+gem 'ruote-postgres', git: 'https://github.com/ifad/ruote-postgres.git'
 
 gem 'dotenv'
 gem 'yajl-ruby'
