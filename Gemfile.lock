@@ -8,7 +8,7 @@ GIT
       ruote
 
 GIT
-  remote: git@github.com:jmettraux/ruote
+  remote: https://github.com/jmettraux/ruote.git
   revision: fd1060f4e0506ed6ad6770ad35add3607267728c
   specs:
     ruote (2.3.1)
