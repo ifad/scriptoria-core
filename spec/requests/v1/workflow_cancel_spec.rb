@@ -21,12 +21,12 @@ describe ScriptoriaCore::Application do
     end
 
     context "validations" do
-      it "returns an error if the workflow does exist" do
+      it "returns an error if the workflow does not exist" do
         allow(ScriptoriaCore::Workflow).to receive(:cancel!).and_raise(ScriptoriaCore::Workflow::NotFoundError)
 
         post '/v1/workflows/1234/cancel'
 
-        expect(response.status).to eq 400
+        expect(response.status).to eq 404
         expect(response.body).to   eq '{"error":"workflow_id not found"}'
       end
     end

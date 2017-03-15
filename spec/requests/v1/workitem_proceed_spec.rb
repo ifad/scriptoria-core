@@ -56,7 +56,7 @@ describe ScriptoriaCore::Application do
           }
         }
 
-        expect(response.status).to eq 400
+        expect(response.status).to eq 404
         expect(response.body).to   eq '{"error":"workitem_id not found"}'
       end
 
