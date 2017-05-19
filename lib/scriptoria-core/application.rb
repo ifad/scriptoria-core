@@ -50,7 +50,7 @@ module ScriptoriaCore
         end
 
         rescue_from Workflow::NotFoundError do |e|
-          error!('workflow_id not found', 400)
+          error!('workflow_id not found', 404)
         end
 
         post :cancel do
@@ -69,7 +69,7 @@ module ScriptoriaCore
             end
 
             rescue_from Workitem::NotFoundError do |e|
-              error!('workitem_id not found', 400)
+              error!('workitem_id not found', 404)
             end
 
             rescue_from Workitem::WorkflowMismatchError do |e|
