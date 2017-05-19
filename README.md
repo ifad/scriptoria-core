@@ -18,7 +18,7 @@ Clone the repo then:
 Then start the services:
 
     bundle exec unicorn -p 1234
-    bundle exec ./script/worker
+    bundle exec bin/worker
     
 The database will be setup automatically - you don't need to run migrations.
     
